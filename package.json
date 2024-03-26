@@ -1,0 +1,11 @@
+{
+  "name": "contact_app",
+  "version": "1.0.0",
+  "description": "- **Overview:** Node.js is a server-side JavaScript runtime used for building scalable and high-performance applications.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
