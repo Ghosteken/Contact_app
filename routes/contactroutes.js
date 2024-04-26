@@ -17,7 +17,6 @@ router.route('/').post( (req, res) =>{
 
 
 router.route('/:id').put( (req, res) =>{
-    //res.send("get all contacts");
     res.status(200).json({
         message: 'Update contacts'
     })
@@ -25,7 +24,6 @@ router.route('/:id').put( (req, res) =>{
 
 
 router.route('/').get( (req, res) =>{
-    //res.send("get all contacts");
     res.status(200).json({
         message: 'Hello World!'
     })
