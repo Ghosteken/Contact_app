@@ -1,46 +1,65 @@
+const asyncHandler = require("express-async-handler");
+const Contacts = require('../models/contactModel');
 //description get all contacts
 //routes get/api/contacts
 //@access public
-
-const getContacts = (req, res) => {
-    res.status(200).json({ message: 'Get all contacts ' })
-};
+ 
+const getContacts = asyncHandler(async(req, res) => {
+    const Contact =await Contacts.find(); 
+    res.status(200).json(Contact)
+});
 
 //description get all contact
 //routes get/api/contacts/:id
 //@route public
-const getContact = (req, res) => {
-    res.status(200).json({ message: `Get  contact${req.params.id}` })
-};
+const getContact = asyncHandler(async(req, res) => {
+    const contact = await Contacts.findById(req.params.id);
+    if (!contact) {
+        res.status(404);
+        throw new Error(`Contact not found`);
+    }
+    res.status(200).json(contact)
+});
 
 
 //description UPDATE contact
 //routes POST /api/contacts/:id
 //@route public
-const updateContact = (req, res) => {
+const updateContact = asyncHandler(async(req, res) => {
+    const {name, email, phone} = req.body;
+    if (!email || !phone || !name) {
+        res.status(400); 
+        console.log(error)
+        throw new Error(`Invalid email or phone`);
+    }
     res.status(200).json({ message: `Updated contact${req.params.id}` })
-};
+});
 
 
 //description DELETE contact
 //routes get/api/contacts/:id
 //@route public
-const deleteContact = (req, res) => {
+const deleteContact = asyncHandler(async (req, res) => {
     res.status(200).json({ message: `delete contact ${req.params.id}` })
-};
+});
 
 //description Create contact
 //routes POST /api/contacts/
 //@route public
-const createContact = (req, res) => {
+const createContact = asyncHandler(async(req, res) => {
     console.log("the request body is", req.body)
     const {name,email,phone}=req.body
     if(!name || !email || !phone){
         res.status(400); 
         throw new Error("ALL fields are required")
     }
-    res.status(201).json({ message: "create contact " })
-};
+    const contact = await Contact.create({
+        name,
+        email,
+        phone,
+    })
+    res.status(201).json(contact)
+});
 
 
 module.exports = {
@@ -48,5 +67,5 @@ module.exports = {
     updateContact,
     createContact,
     getContacts,
-    getContact
+    getContact,
 }; 

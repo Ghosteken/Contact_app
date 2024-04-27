@@ -1,9 +1,11 @@
 const express = require('express');
 const errorHandler = require('./middleware/errorHandler');
+const connectDB = require('./config/dbConnection');
 const dotenv = require('dotenv').config();
 
 const app = express();
 
+connectDB();
 const port = process.env.PORT ||  5000;
 
 //body parser here//
