@@ -1,4 +1,5 @@
 const asyncHandler = require("express-async-handler");
+const mongoose = require("mongoose");
 const Contacts = require('../models/contactModel');
 //description get all contacts
 //routes get/api/contacts
@@ -32,7 +33,12 @@ const updateContact = asyncHandler(async(req, res) => {
         console.log(error)
         throw new Error(`Invalid email or phone`);
     }
-    res.status(200).json({ message: `Updated contact${req.params.id}` })
+    const updatedContact = await Contacts.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        {new: true}
+    );
+    res.status(200).json(updatedContact)
 });
 
 
@@ -40,7 +46,14 @@ const updateContact = asyncHandler(async(req, res) => {
 //routes get/api/contacts/:id
 //@route public
 const deleteContact = asyncHandler(async (req, res) => {
-    res.status(200).json({ message: `delete contact ${req.params.id}` })
+    const Contact = await Contacts.findById( req.params.id);
+    if (!Contact) {
+        res.status(404); 
+        throw new Error('Contact not found')
+    }
+    await Contact.remove();
+
+    res.status(200).json(Contact)
 });
 
 //description Create contact
