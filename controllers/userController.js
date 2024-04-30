@@ -1,17 +1,18 @@
 const User = require('../models/userModel');
 const bycrypt = require('bycrypt');
+const jwt = ('jsonwebtoken')
 const asyncHandler = require('async-Handler');
 //register a user
 //route post /api/users/register
 //public route
 
-const registerUser = asyncHandler(async(req, res) =>{
-    const {username,email,password} = req.body;
+const registerUser = asyncHandler(async (req, res) => {
+    const { username, email, password } = req.body;
     if (!username || !email || !password) {
         res.status(400)
         throw new Error(`Invalid username or email address or password`)
     }
-    const userAvaliable = await User.findOne({email});
+    const userAvaliable = await User.findOne({ email });
     if (userAvaliable) {
         res.status(400)
         throw new Error(`user already authenticated`);
@@ -26,12 +27,12 @@ const registerUser = asyncHandler(async(req, res) =>{
     });
     console.log(user + ' created successfully');
     if (user) {
-        res.status(201).json({_id: user.id, email: user.email});
+        res.status(201).json({ _id: user.id, email: user.email });
     } else {
         res.status(400)
         throw new Error('request failed');
     }
-    res.json({message: 'registered successfully'})
+    res.json({ message: 'registered successfully' })
 });
 
 
@@ -39,9 +40,27 @@ const registerUser = asyncHandler(async(req, res) =>{
 //route post /api/users/login
 //public route
 
-const loginUser = asyncHandler(async(req, res) =>{
-    throw new Error
-    res.json({message: 'login successfully'})
+const loginUser = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        res.status(400)
+        throw new Error(`Invalid email or password, all fields are required`);
+    }
+    const user = await User.findOne({ email });
+    //compare password with hash password
+    if (user && (await bycrypt.compare(password, user.password))) {
+        const accessToken = jwt.sign({
+            user: {
+                username: user.username,
+                id: user.id,
+                email: user.email,
+            }
+        }, process.env.ACCESS_TOKEN_SECRET,{expiresIn: "1m"})
+        res.status(200).json({ accessToken});
+    } else {
+        res.status(401)
+        throw new Error(`Invalid email or password`);
+    }
 });
 
 
@@ -50,9 +69,9 @@ const loginUser = asyncHandler(async(req, res) =>{
 //route post /api/users/currnet
 //private route
 
-const currentUser = asyncHandler(async(req, res) =>{
+const currentUser = asyncHandler(async (req, res) => {
     throw new Error
-    res.json({message: 'info saved successfully'})
+    res.json({ message: 'info saved successfully' })
 });
 
-module.exports = {registerUser, loginUser, currentUser }
+module.exports = { registerUser, loginUser, currentUser }
