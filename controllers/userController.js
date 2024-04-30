@@ -4,7 +4,7 @@ const jwt = ('jsonwebtoken')
 const asyncHandler = require('async-Handler');
 //register a user
 //route post /api/users/register
-//public route
+//private route
 
 const registerUser = asyncHandler(async (req, res) => {
     const { username, email, password } = req.body;
@@ -38,7 +38,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 //login a user
 //route post /api/users/login
-//public route
+//private route
 
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
@@ -55,7 +55,7 @@ const loginUser = asyncHandler(async (req, res) => {
                 id: user.id,
                 email: user.email,
             }
-        }, process.env.ACCESS_TOKEN_SECRET,{expiresIn: "1m"})
+        }, process.env.ACCESS_TOKEN_SECRET,{expiresIn: "15m"})
         res.status(200).json({ accessToken});
     } else {
         res.status(401)
@@ -70,8 +70,7 @@ const loginUser = asyncHandler(async (req, res) => {
 //private route
 
 const currentUser = asyncHandler(async (req, res) => {
-    throw new Error
-    res.json({ message: 'info saved successfully' })
+    res.json(req.user)
 });
 
 module.exports = { registerUser, loginUser, currentUser }

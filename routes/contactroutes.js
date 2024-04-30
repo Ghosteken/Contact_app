@@ -9,7 +9,10 @@ const {
     createContact
 }
 
-    = require('../controllers/contactControllers')
+    = require('../controllers/contactControllers');
+const ValidateToken = require('../middleware/ValidateToken');
+
+router.use(ValidateToken);
 
 router.route('/').get(getContacts).post(createContact)
 
