@@ -27,12 +27,17 @@ const getContact = asyncHandler(async(req, res) => {
 //routes POST /api/contacts/:id
 //@route public
 const updateContact = asyncHandler(async(req, res) => {
-    const {name, email, phone} = req.body;
-    if (!email || !phone || !name) {
+    const Contact = await Contact.findById(req.params.id);
+    if (!Contact) {
         res.status(400); 
         console.log(error)
         throw new Error(`Invalid email or phone`);
     }
+    if (Contacts.user_id.toString() !== req.user.id) {
+        res.status(401);
+        throw new Error(`Not authorized to update this contact`);
+    }
+
     const updatedContact = await Contacts.findByIdAndUpdate(
         req.params.id,
         req.body,
@@ -51,7 +56,11 @@ const deleteContact = asyncHandler(async (req, res) => {
         res.status(404); 
         throw new Error('Contact not found')
     }
-    await Contact.remove();
+    if (Contacts.user_id.toString() !== req.user.id) {
+        res.status(401);
+        throw new Error(`Not authorized to update this contact`);
+    }
+    await Contact.deleteOne({_id: req.user.id})
 
     res.status(200).json(Contact)
 });
@@ -66,10 +75,11 @@ const createContact = asyncHandler(async(req, res) => {
         res.status(400); 
         throw new Error("ALL fields are required")
     }
-    const contact = await Contact.create({
+    const contact = await contact.create({
         name,
         email,
         phone,
+        user_id: req.user.id,
     })
     res.status(201).json(contact)
 });
