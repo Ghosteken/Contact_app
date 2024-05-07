@@ -60,6 +60,32 @@ const CreateUser1 = asyncHandler(async (req, res) => {
     res.status(201).json({_id: user.id, email: user.email});
 })
 
+const updateContact = asyncHandler(async(req, res) =>{
+    const Contact = await Contact.findByid(req.params.id)
+    if (!Contact) {
+        res.status(404)
+        throw new Error("invalid credintails")
+    }
+    if (Contact.user_id.toString() != req.user.id ) {
+        res.status(404)
+        throw new Error
+    }
+    const updatedContact = await Contact.findByidAndUpdate(
+        req.params.id,
+        req.body,
+        {new:true}
+    )
+    console.log(updatedContact)
+})
+
+
+
+const deleteContact = asyncHandler(async(req,res)=>{
+    const Contact = await Contact.findByid(req.params.id)
+    if(!Contact){
+        
+    }
+})
 
 
 
